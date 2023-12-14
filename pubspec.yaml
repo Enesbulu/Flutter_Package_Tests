@@ -1,0 +1,50 @@
+name: mobil_test_projesi1
+description: A new Flutter project.
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.5 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_localization: ^0.1.14 #flutter pub add flutter_localization komutu terminalde çalıştırınca eklenen paket
+  easy_localization: ^3.0.3 #easy_localization paketi ile çoklu dil desteği sağlama işlemi
+  intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  logger: ^2.0.2+1 #loglama işlemi için eklenen paket
+  path_provider: ^2.1.1 #dosya işlemleri için kullanılan paket
+  country_icons: ^2.0.2
+  flag: ^7.0.0
+  get: ^4.6.6
+  http: ^1.1.0 # Flutter’da HTTP istekleri yapmak için paketini projenize eklemeniz gerekiyor.
+  dio: ^5.4.0   #http servisleri için kullandığım bir paket
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+
+  assets:
+    - asset/translations/
+
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700

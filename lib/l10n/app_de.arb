@@ -1,0 +1,15 @@
+
+{
+    "@@locale" : "de",
+    "account": "Konto",
+    "country": "Land",
+    "data_usage": "Datenverbrauch",
+    "display_and_sound": "Anzeige und Ton",
+    "english": "Englisch",
+    "general_settings": "Allgemeine Einstellungen",
+    "notifactions": "Benachrichtigungen",
+    "permissions": "Berechtigungen",
+    "phone_language": "Telefonsprache",
+    "privacy": "Datenschutz",
+    "turkish": "Türkisch"
+}

@@ -1,0 +1,16 @@
+{
+    "home":{
+        "title":"Startseite"
+    },
+    "general":{
+        "button":{
+            "save":"Speichern"
+        },
+        "dialog":{
+            "version":{
+                "title":"Version",
+                "message":"Versionsinformationen"
+            }
+        }
+    }
+}
