@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mobil_test_projesi1/dio_packet_rest_api/http_service/comment_model.dart';
+import 'package:mobil_test_projesi1/dio_packet_rest_api/dio_api_service/comment_model.dart';
 import 'post_model.dart';
 
 abstract class IPostService {

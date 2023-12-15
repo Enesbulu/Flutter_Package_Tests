@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/status/http_status.dart';
-import 'package:mobil_test_projesi1/dio_packet_rest_api/http_service/comments_learn_view.dart';
-import 'package:mobil_test_projesi1/dio_packet_rest_api/http_service/post_model.dart';
-import 'package:mobil_test_projesi1/dio_packet_rest_api/http_service/post_service.dart';
+import 'package:mobil_test_projesi1/dio_packet_rest_api/dio_api_service/comments_learn_view.dart';
+import 'package:mobil_test_projesi1/dio_packet_rest_api/dio_api_service/post_model.dart';
+import 'package:mobil_test_projesi1/dio_packet_rest_api/dio_api_service/post_service.dart';
 
 class ServiceLearn extends StatefulWidget {
   const ServiceLearn({super.key});

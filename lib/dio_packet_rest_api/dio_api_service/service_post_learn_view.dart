@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:mobil_test_projesi1/dio_packet_rest_api/http_service/comments_learn_view.dart';
-import 'package:mobil_test_projesi1/dio_packet_rest_api/http_service/post_model.dart';
+import 'package:mobil_test_projesi1/dio_packet_rest_api/dio_api_service/comments_learn_view.dart';
+import 'package:mobil_test_projesi1/dio_packet_rest_api/dio_api_service/post_model.dart';
 
 class ServicePostLearn extends StatefulWidget {
   const ServicePostLearn({super.key});
