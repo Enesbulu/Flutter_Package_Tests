@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mobil_test_projesi1/isarapp_api_test/model_folder/custom_poi_models/custompoi_model.dart';
 import 'package:mobil_test_projesi1/isarapp_api_test/model_folder/users_models/profil_get_model.dart';
+import 'package:mobil_test_projesi1/maps_with_api/isar_app_token.dart';
 
 void main() {
   // 'Override HttpClient creation' hataları için yazılmış metod, client servisinden önce yazılır ve çalışmalıdır.
@@ -22,21 +23,14 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 class RequestServices {
-  static const String _baseUrl = "https://api.isarapp.com/api";
   late CustomPoisModel custompoiModel;
-  static const String _token =
-      "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MWRiMjQ5Yy05NDJmLTRmNmQtYWY3ZC04MDUwOTU3NDc3ZWQiLCJmb3VuZGF0aW9uIjoiYzk3OGY5YTctN2U1YS00ZDBlLWFjODQtMTI1ZTgzMjY1YWMyIiwibGFuZyI6InRyIiwibmJmIjoxNzAyOTgzMTM1LCJleHAiOjE3MDUwNTY3MzUsImlhdCI6MTcwMjk4MzEzNX0.Q4BhAPnbza1NfFJxGIIqmpcIpHZoYTgwkvYlIHOlcEpVsCj_3Ee2Mn2dBuY8U-84kznMuLaM0ntvKe0FmzubIw";
-
+  static const String _token = TokenInfo.token;
   static const Map<String, String> _header = <String, String>{'Authorization': 'Bearer $_token', 'Content-Type': 'application/json'};
 
   ///User_profil ile ilgili bilgileri çeker ve listeler
   void request_Get_Profile() async {
     ProfileGetModel profileGetModel;
-    const String _getUserProfilEndpoint = "/v1/users/profile";
-    final Uri _urlVariable = Uri.parse(_baseUrl + _getUserProfilEndpoint);
-    // final Uri _urlVariable = Uri.parse('https://api.isarapp.com/api/v1/users/profile');
-    // final _urlVariable = Uri.https(_baseUrl, _getUserProfil_endpoint, {'q': '{http}'});
-    // var response = await http.get(_urlVariable,);
+    final Uri _urlVariable = Uri.parse(TokenInfo.baseUrlWithEndPoint);
 
     final response = await http.get(
       _urlVariable,
@@ -79,8 +73,7 @@ class RequestServices {
   }
 
   void request_Get_Custompois() async {
-    const String _getCustompoiEndpoint = "/v1/custompois";
-    final Uri _urlValue = Uri.parse(_baseUrl + _getCustompoiEndpoint);
+    final Uri _urlValue = Uri.parse(TokenInfo.baseUrlWithEndPoint);
     final _responseCustompois = await http.get(
       _urlValue,
       headers: _header,
@@ -95,13 +88,12 @@ class RequestServices {
 
       print("---CustomPoiGetModel: ");
       for (var custompoiModel in custompoiModels) {
-        print(
-            'İd: ${custompoiModel.id}  '
-                'Name: ${custompoiModel.name} '
-                'description: ${custompoiModel.description} '
-                'documentPaths: ${custompoiModel.documentPaths}  '
-                'parentId: ${custompoiModel.parentId} '
-                'isDeleted: ${custompoiModel.isDeleted}');
+        print('İd: ${custompoiModel.id}  '
+            'Name: ${custompoiModel.name} '
+            'description: ${custompoiModel.description} '
+            'documentPaths: ${custompoiModel.documentPaths}  '
+            'parentId: ${custompoiModel.parentId} '
+            'isDeleted: ${custompoiModel.isDeleted}');
         print("--------");
         print('''
 Addres Levels:  ${custompoiModel.addressDetail!.addressLevels!}      
@@ -115,8 +107,7 @@ address long:  ${custompoiModel.addressDetail!.latitude} ''');
   }
 
   Future<List<CustomPoisModel>?> request_Get_Custompois_Returned() async {
-    const String _getCustompoiEndpoint = "/v1/custompois";
-    final Uri _urlValue = Uri.parse(_baseUrl + _getCustompoiEndpoint);
+    final Uri _urlValue = Uri.parse(TokenInfo.baseUrlWithEndPoint);
     final _responseCustompois = await http.get(
       _urlValue,
       headers: _header,
@@ -134,25 +125,4 @@ address long:  ${custompoiModel.addressDetail!.latitude} ''');
     }
     return null;
   }
-
-  // List<CustomPoisModel>? request_Get_Custompois_Returned2() async {
-  //   const String _getCustompoiEndpoint = "/v1/custompois";
-  //   final Uri _urlValue = Uri.parse(_baseUrl + _getCustompoiEndpoint);
-  //   final _responseCustompois = await http.get(
-  //     _urlValue,
-  //     headers: _header,
-  //   );
-
-  //   if (_responseCustompois.statusCode == HttpStatus.ok) {
-  //     print("-----Geri dönüş durumu 200");
-  //     var customPoiData = json.decode(_responseCustompois.body);
-
-  //     List<CustomPoisModel> custompoiModels = customPoiData.map<CustomPoisModel>((item) => CustomPoisModel.fromJson(item)).toList();
-
-  //     if (!custompoiModels.isEmpty) {
-  //       return custompoiModels;
-  //     }
-  //   }
-  //   return null;
-  // }
 }

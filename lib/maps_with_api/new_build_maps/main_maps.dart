@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobil_test_projesi1/isarapp_api_test/model_folder/custom_poi_models/custompoi_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobil_test_projesi1/maps_with_api/isar_app_token.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -104,15 +105,13 @@ class AddressDetailMarker extends IMarkerModel {
 }
 
 class RequestService {
-  static const String _baseUrl = "https://api.isarapp.com/api";
-  static const String _token =
-      "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MWRiMjQ5Yy05NDJmLTRmNmQtYWY3ZC04MDUwOTU3NDc3ZWQiLCJmb3VuZGF0aW9uIjoiYzk3OGY5YTctN2U1YS00ZDBlLWFjODQtMTI1ZTgzMjY1YWMyIiwibGFuZyI6InRyIiwibmJmIjoxNzAyOTgzMTM1LCJleHAiOjE3MDUwNTY3MzUsImlhdCI6MTcwMjk4MzEzNX0.Q4BhAPnbza1NfFJxGIIqmpcIpHZoYTgwkvYlIHOlcEpVsCj_3Ee2Mn2dBuY8U-84kznMuLaM0ntvKe0FmzubIw";
-
+  // static const String _baseUrl = "https://api.isarapp.com/api";
+  static const String _token = TokenInfo.token;
   static const Map<String, String> _header = <String, String>{'Authorization': 'Bearer $_token', 'Content-Type': 'application/json'};
 
   Future<List<AddressDetailMarker>?> getCustomPois() async {
-    const String _CustomPoiEndPoint = "/v1/custompois?pagesize=5";
-    final Uri _urlValue = Uri.parse(_baseUrl + _CustomPoiEndPoint);
+    // const String _CustomPoiEndPoint = TokenInfo._CustomPoiEndPoint;
+    final Uri _urlValue = Uri.parse(TokenInfo.baseUrlWithEndPoint);
     final _customPois = await http.get(_urlValue, headers: _header);
     List<AddressDetailMarker> listAddressdetailMarkers = [];
 

@@ -108,7 +108,7 @@ class RequestService extends State<GoogleMap> {
   static const Map<String, String> _header = <String, String>{'Authorization': 'Bearer ${TokenInfo.token}', 'Content-Type': 'application/json'};
 
   Future<List<AddressDetailMarker>?> getCustomPois() async {
-    final Uri _urlValue = Uri.parse(TokenInfo.baseUrl + TokenInfo.CustomPoiEndPoint);
+    final Uri _urlValue = Uri.parse(TokenInfo.baseUrlWithEndPoint);
     final _customPois = await http.get(_urlValue, headers: _header);
     AddressDetailMarker addressDetailsMarker = AddressDetailMarker();
     List<AddressDetailMarker> listAddressdetailMarkers = [];
