@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/status/http_status.dart';
@@ -41,7 +40,7 @@ class _ServiceLearnState extends State<ServiceLearn> {
   Future<void> fetchPostItems() async {
     _changeLoading();
 
-    ///Dio'yu kullanarak bir REST API'sinden veri alır.
+    ///Dio'yu kullanarak bir RE ST API'sinden veri alır.
     final response = await Dio().get("https://jsonplaceholder.typicode.com//posts");
 
     // Eğer istek başarılıysa ve 'ok' durum koduyla dönerse,
