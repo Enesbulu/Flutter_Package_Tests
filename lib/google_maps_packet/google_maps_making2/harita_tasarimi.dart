@@ -10,9 +10,6 @@ class HaritaSayfasi extends StatefulWidget {
   State<HaritaSayfasi> createState() => _HaritaSayfasiState();
 }
 
-// //Harita başlangıç pozisyonları
-// double _originLatitude = 41.008240; //Enlem
-// double _originLongitude = 28.978359; //Boylam
 late double _originLatitude; //Enlem
 late double _originLongitude; //Boylam
 
@@ -54,9 +51,6 @@ class _HaritaSayfasiState extends State<HaritaSayfasi> {
         compassEnabled: true,
         scrollGesturesEnabled: true,
         zoomControlsEnabled: true,
-        // onMapCreated: (controller) async {
-        //   mapController = controller;
-        // },
       ),
     );
   }

@@ -6,6 +6,8 @@ import 'package:mobil_test_projesi1/maps_with_api/isar_app_token.dart';
 import 'package:mobil_test_projesi1/maps_with_api/models/custom_pois_model.dart';
 import 'package:http/http.dart' as http;
 
+///Geliştirme yapılacak asıl yapı
+
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   RequestService().getCustomPois();
@@ -104,7 +106,6 @@ class AddressDetailMarker extends IMarkerModel {
 
 class RequestService extends State<GoogleMap> {
   late CustomPoisModel custompoiModel;
-
   static const Map<String, String> _header = <String, String>{'Authorization': 'Bearer ${TokenInfo.token}', 'Content-Type': 'application/json'};
 
   Future<List<AddressDetailMarker>?> getCustomPois() async {

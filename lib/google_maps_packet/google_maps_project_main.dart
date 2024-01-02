@@ -101,15 +101,6 @@ class _MyMapsState extends State<MyMaps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     _onMapTypeButtonPressed;
-      //     goToLoc() {
-      //       _controller.animateCamera(CameraUpdate.newLatLng(const LatLng(38.392300, 27.047840)));
-      //     }
-      //   },
-      //   // child: Icon(Icons.map),
-      // ),
       body: GoogleMap(
         myLocationButtonEnabled: true,
         mapType: _currentMapType,

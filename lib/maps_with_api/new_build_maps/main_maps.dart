@@ -64,7 +64,25 @@ Widget get bottomListView => Positioned(
         child: ListView.builder(
           itemBuilder: (context, index) {
             return const Card(
-              child: Text("Test"),
+              child: Column(
+                children: [
+                  Row(
+                    children: [Text("Test1")],
+                  ),
+                  Row(
+                    children: [Text("Test2")],
+                  ),
+                  Row(
+                    children: [Text("Test3")],
+                  ),
+                  Row(
+                    children: [Text("Test4")],
+                  ),
+                  Row(
+                    children: [Text("Test5")],
+                  )
+                ],
+              ),
             );
           },
         ),
@@ -105,7 +123,6 @@ class AddressDetailMarker extends IMarkerModel {
 }
 
 class RequestService {
-  // static const String _baseUrl = "https://api.isarapp.com/api";
   static const String _token = TokenInfo.token;
   static const Map<String, String> _header = <String, String>{'Authorization': 'Bearer $_token', 'Content-Type': 'application/json'};
 
