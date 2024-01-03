@@ -69,11 +69,19 @@ class _MapsApiMarkerState extends State<MapsApiMarker> {
               right: 5,
               height: 100,
               child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
                 itemCount: temp2.length,
                 itemBuilder: (context, index) {
-                  return Text(
-                    temp2.elementAt(index).infoWindow.title!,
-                    style: const TextStyle(color: Colors.white),
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width - 100,
+                    child: Card(
+                        child: ListTile(
+                      title: Text(
+                        temp2.elementAt(index).infoWindow.title!,
+                        // style: const TextStyle(color: Colors.white),
+                      ),
+                    )),
                   );
                 },
               )),
