@@ -8,7 +8,7 @@ import 'package:mobil_test_projesi1/maps_with_api/isar_app_token.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
-  return runApp(const MapsApiMarker());
+  return runApp(MapsApiMarker());
 }
 
 ///Http Sertifika sorunlarını ezmek için kullanılan class
@@ -21,74 +21,117 @@ class MyHttpOverrides extends HttpOverrides {
 
 ///Anaekran Yapısı
 class MapsApiMarker extends StatelessWidget {
-  const MapsApiMarker({super.key});
+  MapsApiMarker({super.key});
+  Future<Set<Marker>> temp = AddressDetailMarker().createCustomMarker();
+  Set<Marker> temp2 = <Marker>{};
+
+  @override
+  void initState() {
+    convertMarker();
+  }
+
+  void convertMarker() async {
+    temp2 = await AddressDetailMarker().createCustomMarker();
+    var temp3 = temp2.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Stack(
-        children: <Widget>[buildGoogleMap, bottomListView],
+        children: <Widget>[
+          FutureBuilder(
+            future: temp,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                return GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(10, 10),
+                    zoom: 5,
+                  ),
+                  markers: snapshot.data,
+                );
+              } else {
+                print("-------HasData = NULL oldu!!");
+                return const Center(heightFactor: 20, widthFactor: 20, child: CircularProgressIndicator());
+              }
+            },
+          ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            right: 5,
+            height: 100,
+            child: ListView.builder(
+              itemCount: 2, //temp2.length,
+              itemBuilder: (context, index) {
+                return Text(
+                  "data",
+                  style: TextStyle(color: Colors.white),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-}
 
 //Maps yapısı -katman
 
-Widget get buildGoogleMap => FutureBuilder(
-      future: AddressDetailMarker().createCustomMarker(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-          return GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(10, 10),
-              zoom: 5,
-            ),
-            markers: snapshot.data,
-          );
-        } else {
-          print("-------HasData = NULL oldu!!");
-          return const Center(heightFactor: 20, widthFactor: 20, child: CircularProgressIndicator());
-        }
-      },
-    );
+  // Widget get buildGoogleMap => FutureBuilder(
+  //       future: AddressDetailMarker().createCustomMarker(),
+  //       builder: (BuildContext context, AsyncSnapshot snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+  //           return GoogleMap(
+  //             mapType: MapType.normal,
+  //             initialCameraPosition: const CameraPosition(
+  //               target: LatLng(10, 10),
+  //               zoom: 5,
+  //             ),
+  //             markers: snapshot.data,
+  //           );
+  //         } else {
+  //           print("-------HasData = NULL oldu!!");
+  //           return const Center(heightFactor: 20, widthFactor: 20, child: CircularProgressIndicator());
+  //         }
+  //       },
+  //     );
 
-Widget get bottomListView => Positioned(
-      bottom: 20,
-      left: 20,
-      right: 5,
-      height: 100,
-      child: Container(
-        color: Colors.red,
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return const Card(
-              child: Column(
-                children: [
-                  Row(
-                    children: [Text("Test1")],
-                  ),
-                  Row(
-                    children: [Text("Test2")],
-                  ),
-                  Row(
-                    children: [Text("Test3")],
-                  ),
-                  Row(
-                    children: [Text("Test4")],
-                  ),
-                  Row(
-                    children: [Text("Test5")],
-                  )
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-
+  // Widget get bottomListView => Positioned(bottom: 20, left: 20, right: 5, height: 100, child: Observer(builder: (context) => const Text("test562"))
+  //     // child: Container(
+  //     //   color: Colors.red,
+  //     //   // child: ObserverList(),
+  //     //   child: ListView.builder(
+  //     //     itemBuilder: (context, index) {
+  //     //       return const Card(
+  //     //         child: Column(
+  //     //           children: [
+  //     //             Row(
+  //     //               children: [Text("Test1")],
+  //     //             ),
+  //     //             Row(
+  //     //               children: [Text("Test2")],
+  //     //             ),
+  //     //             Row(
+  //     //               children: [Text("Test3")],
+  //     //             ),
+  //     //             Row(
+  //     //               children: [Text("Test4")],
+  //     //             ),
+  //     //             Row(
+  //     //               children: [Text("Test5")],
+  //     //             )
+  //     //           ],
+  //     //         ),
+  //     //       );
+  //     //     },
+  //     //   ),
+  //     // ),
+  //     );
+}
 //   @override
 //   Widget build(BuildContext context) {
 //     return ListView.builder(
@@ -125,9 +168,7 @@ class AddressDetailMarker extends IMarkerModel {
 class RequestService {
   static const String _token = TokenInfo.token;
   static const Map<String, String> _header = <String, String>{'Authorization': 'Bearer $_token', 'Content-Type': 'application/json'};
-
   Future<List<AddressDetailMarker>?> getCustomPois() async {
-    // const String _CustomPoiEndPoint = TokenInfo._CustomPoiEndPoint;
     final Uri _urlValue = Uri.parse(TokenInfo.baseUrlWithEndPoint);
     final _customPois = await http.get(_urlValue, headers: _header);
     List<AddressDetailMarker> listAddressdetailMarkers = [];
@@ -137,8 +178,6 @@ class RequestService {
 
       List<CustomPoisModel> customPoisModel =
           await dataResponseCustomPoi.map<CustomPoisModel>((item) => CustomPoisModel.fromJson(item)).cast<CustomPoisModel>().toList();
-      // print(customPoisModel);
-
       for (var i = 0; i < customPoisModel.length; i++) {
         AddressDetailMarker addressDetailsMarker = AddressDetailMarker();
         addressDetailsMarker.latitude = customPoisModel[i].addressDetail!.latitude!;
