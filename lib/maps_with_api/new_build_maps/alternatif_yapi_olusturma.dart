@@ -11,6 +11,8 @@ void main() {
   runApp(MapsApiMarker());
 }
 
+GoogleMapController? mapController;
+
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
@@ -27,6 +29,7 @@ class MapsApiMarker extends StatefulWidget {
 class _MapsApiMarkerState extends State<MapsApiMarker> {
   Future<Set<Marker>> temp = AddressDetailMarker().createCustomMarker();
   Set<Marker> temp2 = <Marker>{};
+  GoogleMapController? mapController;
 
   @override
   void initState() {
@@ -37,26 +40,63 @@ class _MapsApiMarkerState extends State<MapsApiMarker> {
   void convertMarker() async {
     temp2 = await AddressDetailMarker().createCustomMarker();
     setState(() {});
-    var temp3 = temp2.length;
   }
 
+  String? selectedMarker; // seçilen markerın id'sini tutan değişken
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Stack(
         children: <Widget>[
-          FutureBuilder(
+          FutureBuilder<Set<Marker>>(
             future: temp,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data.isNotEmpty) {
+              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data!.isNotEmpty) {
                 return GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: const CameraPosition(
                     target: LatLng(10, 10),
                     zoom: 5,
                   ),
-                  markers: snapshot.data,
+                  markers: snapshot.data!.map<Marker>((Marker marker) {
+                    return marker.copyWith(
+                      zIndexParam: marker.markerId.value == selectedMarker ? 10.0 : 1.0,
+                      infoWindowParam: marker.markerId.value == selectedMarker
+                          ? InfoWindow(
+                              title: marker.infoWindow.title,
+                              snippet: marker.infoWindow.snippet,
+                              onTap: () {
+                                setState(
+                                  () {
+                                    // mapController!.animateCamera(CameraUpdate.newLatLng(marker.position));
+                                    mapController!.animateCamera(
+                                      CameraUpdate.newLatLngZoom(
+                                        marker.position,
+                                        18.0,
+                                      ),
+                                    );
+
+                                    // CameraPosition(target: marker.position, zoom: 2.0);
+                                  },
+                                );
+                              },
+                            )
+                          : marker.infoWindow,
+                    );
+                  }).toSet(),
+                  onTap: (position) {
+                    setState(
+                      () {
+                        selectedMarker = null;
+                      },
+                    );
+                  },
+                  onMapCreated: (controller) {
+                    setState(() {
+                      mapController = controller;
+                    });
+                  },
                 );
               } else {
                 return const Center(heightFactor: 20, widthFactor: 20, child: CircularProgressIndicator());
@@ -64,27 +104,44 @@ class _MapsApiMarkerState extends State<MapsApiMarker> {
             },
           ),
           Positioned(
-              bottom: 20,
-              left: 20,
-              right: 5,
-              height: 100,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: temp2.length,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width - 100,
+            bottom: 20,
+            left: 20,
+            right: 5,
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: temp2.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width - 100,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedMarker = temp2.elementAt(index).markerId.value;
+                      });
+                    },
                     child: Card(
-                        child: ListTile(
-                      title: Text(
-                        temp2.elementAt(index).infoWindow.title!,
-                        // style: const TextStyle(color: Colors.white),
+                      child: ListTile(
+                        title: Text(
+                          temp2.elementAt(index).infoWindow.title!,
+                          // style: const TextStyle(colo r: Colors.white),
+                        ),
+                        onTap: () async {
+                          Set<Marker> temp3 = await temp;
+                          Marker temp2Marker = temp3.elementAt(index);
+                          mapController!.animateCamera(
+                            // CameraUpdate.newLatLng(temp3.elementAt(index).position),
+                            CameraUpdate.newLatLngZoom(temp2Marker.position, 12.0),
+                          );
+                        },
                       ),
-                    )),
-                  );
-                },
-              )),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -101,11 +158,12 @@ class AddressDetailMarker extends IMarkerModel {
         i++;
         markersList.add(
           Marker(
-            markerId: MarkerId(element.markerId ?? i.toString()),
-            position: LatLng(element.latitude, element.longitude),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-            infoWindow: InfoWindow(title: element.markerId == "" ? "NoName" : element.markerId),
-          ),
+              markerId: MarkerId(element.markerId ?? i.toString()),
+              position: element.latlong,
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+              infoWindow: InfoWindow(title: element.markerId == "" ? "NoName" : element.markerId),
+              alpha: 1.0,
+              zIndex: 15),
         );
       }
     }
@@ -127,12 +185,15 @@ class RequestService {
       var dataResponseCustomPoi = json.decode(_customPois.body);
       List<CustomPoisModel> customPoisModel =
           await dataResponseCustomPoi.map<CustomPoisModel>((item) => CustomPoisModel.fromJson(item)).cast<CustomPoisModel>().toList();
+
       for (var i = 0; i < customPoisModel.length; i++) {
         AddressDetailMarker addressDetailsMarker = AddressDetailMarker();
         addressDetailsMarker.latitude = customPoisModel[i].addressDetail!.latitude!;
         addressDetailsMarker.longitude = customPoisModel[i].addressDetail!.longitude!;
         addressDetailsMarker.markerId = customPoisModel[i].addressDetail?.note ?? i.toString();
         listAddressdetailMarkers.add(addressDetailsMarker);
+
+        mapController?.animateCamera(CameraUpdate.newLatLng(addressDetailsMarker.latlong)); //?
       }
     }
     if (listAddressdetailMarkers.isNotEmpty) return listAddressdetailMarkers;
@@ -143,4 +204,8 @@ abstract class IMarkerModel {
   late String markerId;
   late double latitude;
   late double longitude;
+}
+
+extension MapLatLong on AddressDetailMarker {
+  LatLng get latlong => LatLng(latitude, longitude);
 }
